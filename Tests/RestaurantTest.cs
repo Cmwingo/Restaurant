@@ -22,6 +22,17 @@ namespace RestaurantReview
       Assert.Equal(0, result);
     }
 
+    [Fact]
+    public void Test_EqualityMethodOverrideWorks()
+    {
+      //Arrange
+      Restaurant firstRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, 1);
+      Restaurant secondRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, 1);
+
+      Assert.Equal(firstRestaurant, secondRestaurant);
+
+    }
+
     public void Dispose()
     {
 
