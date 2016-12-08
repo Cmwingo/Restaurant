@@ -16,6 +16,36 @@ namespace RestaurantReview
       _name = Name;
     }
 
+    public override bool Equals(System.Object otherCuisine)
+    {
+      if(!(otherCuisine is Cuisine))
+      {
+        return false;
+      }
+      else
+      {
+        Cuisine newCuisine = (Cuisine) otherCuisine;
+        bool idEquality = this.GetId() == newCuisine.GetId();
+        bool nameEquality = this.GetName() == newCuisine.GetName();
+        return(idEquality && nameEquality);
+      }
+    }
+
+    public override int GetHashCode()
+    {
+      return this.GetName().GetHashCode();
+    }
+
+    public int GetId()
+    {
+      return _id;
+    }
+
+    public string GetName()
+    {
+      return _name;
+    }
+
     public static List<Cuisine> GetAll()
     {
       List<Cuisine> allCuisines = new List<Cuisine>{};
@@ -45,6 +75,34 @@ namespace RestaurantReview
       }
 
       return allCuisines;
+    }
+
+    public void Save()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO cuisines (name) OUTPUT INSERTED.id VALUES (@CuisineName);", conn);
+
+      SqlParameter cuisineNameParameter = new SqlParameter();
+      cuisineNameParameter.ParameterName = "@CuisineName";
+      cuisineNameParameter.Value = this.GetName();
+
+      cmd.Parameters.Add(cuisineNameParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._id = rdr.GetInt32(0);
+      }
+      if(rdr != null)
+      {
+        rdr.Close();
+      }
+      if(conn != null)
+      {
+        conn.Close();
+      }
     }
   }
 }
