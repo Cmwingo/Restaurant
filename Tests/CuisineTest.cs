@@ -63,6 +63,20 @@ namespace RestaurantReview
       //Assert
       Assert.Equal(testId, result);
     }
+
+    [Fact]
+    public void Test_Find_FindsCuisineInDatabase()
+    {
+      //Arrange
+      Cuisine testCuisine = new Cuisine("Mexican");
+
+      //Act
+      testCuisine.Save();
+      Cuisine foundCuisine = Cuisine.Find(testCuisine.GetId());
+
+      //Assert
+      Assert.Equal(testCuisine, foundCuisine);
+    }
     public void Dispose()
     {
       Cuisine.DeleteAll();
