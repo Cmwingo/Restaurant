@@ -77,9 +77,28 @@ namespace RestaurantReview
       //Assert
       Assert.Equal(testCuisine, foundCuisine);
     }
+
+    [Fact]
+    public void Test_GetRestaurants_RetrievesAllRestaurantsWithCuisine()
+    {
+      Cuisine testCuisine = new Cuisine("Mexican");
+      testCuisine.Save();
+
+      Restaurant firstRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, testCuisine.GetId());
+      firstRestaurant.Save();
+      Restaurant secondRestaurant = new Restaurant("Cracker Jack's", "Northwest", "Pub", "$$", true, testCuisine.GetId());
+      secondRestaurant.Save();
+
+      List<Restaurant> testRestaurantList = new List<Restaurant>{firstRestaurant, secondRestaurant};
+      List<Restaurant> resultRestaurantList = testCuisine.GetRestaurants();
+
+      Assert.Equal(testRestaurantList, resultRestaurantList);
+
+    }
     public void Dispose()
     {
       Cuisine.DeleteAll();
+      Restaurant.DeleteAll();
     }
   }
 }
