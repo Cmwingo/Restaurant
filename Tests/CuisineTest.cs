@@ -47,9 +47,25 @@ namespace RestaurantReview
       Assert.Equal(testList, result);
     }
 
+    [Fact]
+    public void Test_Save_AssignsIdToCuisineObjects()
+    {
+      //Arrange
+      Cuisine testCuisine = new Cuisine("Mexican");
+
+      //Act
+      testCuisine.Save();
+      Cuisine savedCuisine = Cuisine.GetAll()[0];
+
+      int result = savedCuisine.GetId();
+      int testId = testCuisine.GetId();
+
+      //Assert
+      Assert.Equal(testId, result);
+    }
     public void Dispose()
     {
-      
+      Cuisine.DeleteAll();
     }
   }
 }
