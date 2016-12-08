@@ -1,7 +1,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace RestaurantReview.Objects
+namespace RestaurantReview
 {
   public class DB
   {

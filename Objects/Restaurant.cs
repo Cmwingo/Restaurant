@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 
-namespace RestaurantReview.Objects
+namespace RestaurantReview
 {
   public class Restaurant
   {
@@ -15,27 +15,30 @@ namespace RestaurantReview.Objects
     private bool _delivery;
     private int _cuisineId;
 
-    public Restaurant(string name, string location, string description, string avgCost, bool delivery, int cuisineId)
+    public Restaurant(string Name, string Location, string Description, string AvgCost, bool Delivery, int CuisineId, int Id = 0)
     {
-      _name = name;
-      _location = location;
-      _description = description;
-      _avgCost = avgCost;
-      _delivery = delivery;
-      _cuisineId = cuisineId;
+      _id = Id;
+      _name = Name;
+      _location = Location;
+      _description = Description;
+      _avgCost = AvgCost;
+      _delivery = Delivery;
+      _cuisineId = CuisineId;
     }
 
-    public override bool Equals(System.Object restaurant)
+    public override bool Equals(System.Object otherRestaurant)
     {
-      if(!(restaurant is Restaurant))
+      if(!(otherRestaurant is Restaurant))
       {
         return false;
       }
       else
       {
-        Restaurant newRestaurant = (Restaurant) restaurant;
+        Restaurant newRestaurant = (Restaurant) otherRestaurant;
         bool idEquality = (this.GetId() == newRestaurant.GetId());
-        return idEquality;
+        bool nameEquality = (this.GetName() == newRestaurant.GetName());
+        bool cuisineIdEquality = (this.GetCuisineId() == newRestaurant.GetCuisineId());
+        return (idEquality && nameEquality && cuisineIdEquality);
       }
     }
 
@@ -76,7 +79,7 @@ namespace RestaurantReview.Objects
 
     public static List<Restaurant> GetAll()
     {
-      List<Restaurant> AllRestaurants = new List<Restaurant>();
+      List<Restaurant> AllRestaurants = new List<Restaurant>{};
 
       SqlConnection conn = DB.Connection();
       conn.Open();
@@ -92,16 +95,8 @@ namespace RestaurantReview.Objects
         string restaurantAvgCost = rdr.GetString(4);
         bool restaurantDelivery = rdr.GetBoolean(rdr.GetOrdinal("delivery"));
         int restaurantCusineId = rdr.GetInt32(6);
-        Console.WriteLine(restaurantId);
-        Console.WriteLine(restaurantName);
-        Console.WriteLine(restaurantLocation);
-        Console.WriteLine(restaurantDescription);
-        Console.WriteLine(restaurantAvgCost);
-        Console.WriteLine(restaurantDelivery);
-        Console.WriteLine(restaurantCusineId);
 
-
-        Restaurant newRestaurant = new Restaurant(restaurantName, restaurantLocation, restaurantDescription, restaurantAvgCost, restaurantDelivery, restaurantCusineId);
+        Restaurant newRestaurant = new Restaurant(restaurantName, restaurantLocation, restaurantDescription, restaurantAvgCost, restaurantDelivery, restaurantCusineId,restaurantId);
         AllRestaurants.Add(newRestaurant);
       }
 
@@ -117,19 +112,11 @@ namespace RestaurantReview.Objects
       return AllRestaurants;
     }
 
-    public static void DeleteAll()
-    {
-      SqlConnection conn = DB.Connection();
-      conn.Open();
-      SqlCommand cmd = new SqlCommand("DELETE FROM restaurants;", conn);
-      cmd.ExecuteNonQuery();
-      conn.Close();
-    }
-
     public void Save()
     {
       SqlConnection conn = DB.Connection();
       conn.Open();
+
       SqlCommand cmd = new SqlCommand("INSERT INTO restaurants (name, location, description, avg_cost, delivery, cuisine_id) OUTPUT INSERTED.id VALUES (@RestaurantName, @RestaurantLocation, @RestaurantDescription, @RestaurantAvgCost, @RestaurantDelivery, @RestaurantCuisineId);", conn);
 
       SqlParameter nameParameter = new SqlParameter();
@@ -179,5 +166,57 @@ namespace RestaurantReview.Objects
       }
     }
 
+    public static Restaurant Find(int id)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM restaurants WHERE id=@RestaurantId;", conn);
+      SqlParameter restaurantIdParameter = new SqlParameter();
+      restaurantIdParameter.ParameterName = "@RestaurantId";
+      restaurantIdParameter.Value = id.ToString();
+      cmd.Parameters.Add(restaurantIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int foundRestaurantId = 0;
+      string foundRestaurantName = null;
+      string foundRestaurantDescription = null;
+      string foundRestaurantLocation = null;
+      string foundRestaurantAvgCost = null;
+      bool foundRestaurantDelivery = false;
+      int foundRestaurantCuisineId = 0;
+
+      while(rdr.Read())
+      {
+        foundRestaurantId = rdr.GetInt32(0);
+        foundRestaurantName = rdr.GetString(1);
+        foundRestaurantLocation = rdr.GetString(2);
+        foundRestaurantDescription = rdr.GetString(3);
+        foundRestaurantAvgCost = rdr.GetString(4);
+        foundRestaurantDelivery = rdr.GetBoolean(rdr.GetOrdinal("delivery"));
+        foundRestaurantCuisineId = rdr.GetInt32(6);
+      }
+
+      Restaurant foundRestaurant = new Restaurant(foundRestaurantName, foundRestaurantLocation, foundRestaurantDescription, foundRestaurantAvgCost, foundRestaurantDelivery, foundRestaurantCuisineId, foundRestaurantId);
+
+      if(rdr != null)
+      {
+        rdr.Close();
+      }
+      if(conn != null)
+      {
+        conn.Close();
+      }
+      return foundRestaurant;
+    }
+
+    public static void DeleteAll()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM restaurants;", conn);
+      cmd.ExecuteNonQuery();
+      conn.Close();
+    }
   }
 }

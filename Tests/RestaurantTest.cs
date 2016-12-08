@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System;
-using RestaurantReview.Objects;
 using Xunit;
 using System.Data;
 using System.Data.SqlClient;
@@ -37,19 +36,43 @@ namespace RestaurantReview
     public void Test_SavesRestaurantToDatabase()
     {
       //Arrange
-      Restaurant newRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, 1);
-      newRestaurant.Save();
+      Restaurant testRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, 1);
 
       //Act
-      List<Restaurant> savedRestaurants = Restaurant.GetAll();
-      List<Restaurant> testList = new List<Restaurant>{newRestaurant};
+      testRestaurant.Save();
+      List<Restaurant> result = Restaurant.GetAll();
+      List<Restaurant> testList = new List<Restaurant>{testRestaurant};
 
       //Assert
-      Assert.Equal(testList, savedRestaurants);
+      Assert.Equal(testList, result);
     }
     public void Dispose()
     {
       Restaurant.DeleteAll();
+    }
+
+    [Fact]
+    public void Test_Save_AssignsIdToObject()
+    {
+      Restaurant testRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, 1);
+      testRestaurant.Save();
+      Restaurant savedRestaurant = Restaurant.GetAll()[0];
+
+      int result = savedRestaurant.GetId();
+      int testId = testRestaurant.GetId();
+
+      Assert.Equal(testId, result);
+    }
+
+    [Fact]
+    public void Test_Find_FindsRestaurantInDatabase()
+    {
+      Restaurant testRestaurant = new Restaurant("Rae's", "Northwest", "Casual family", "$", true, 1);
+      testRestaurant.Save();
+
+      Restaurant foundRestaurant = Restaurant.Find(testRestaurant.GetId());
+
+      Assert.Equal(testRestaurant, foundRestaurant);
     }
   }
 }
