@@ -29,6 +29,17 @@ namespace RestaurantReview
         return View["success.cshtml"];
       };
 
+      Get["/cuisine/edit/{id}"] = parameters => {
+        Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
+        return View["cuisine_edit.cshtml", SelectedCuisine];
+      };
+
+      Patch["cuisine/edit/{id}"] = parameters => {
+      Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
+      SelectedCuisine.Update(Request.Form["cuisine-name"]);
+      return View["success.cshtml"];
+    };
+
       Get["/cuisines/{id}"] = parameters => {
         Dictionary<string, object> model = new Dictionary<string, object>();
         var SelectedCuisine = Cuisine.Find(parameters.id);

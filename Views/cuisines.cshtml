@@ -13,9 +13,14 @@
     <ul>
       @foreach(var cuisine in Model)
       {
-        <li><a href="/cuisines/@cuisine.GetId()">@cuisine.GetName()</a></li>
+        <li><a href="/cuisines/@cuisine.GetId()">@cuisine.GetName()</a> | | <a href="/cuisine/edit/@cuisine.GetId()">Edit</a></li>
       }
     </ul>
-    <a href="/cuisines/new">Add a new cuisine</a>
+    <h4><a href="/cuisines/new">Add a new cuisine</a></h4>
+    <h4><a href="/">Return home</a></h4>
+
+    <form action="/cuisines/clear" method="post">
+      <button type="submit">Clear all cuisines</button>
+    </form>
   </body>
 </html>
