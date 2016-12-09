@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Cuisine</title>
+  </head>
+  <body>
+    <h2>Here are all the restaurants serving this cuisine:</h2>
+
+    @if(@Model["restaurants"].Count == 0)
+    {
+      <p>No tasks have been added yet!</p>
+    }
+    else
+    {
+      <ol>
+        @foreach(var restaurant in @Model["restaurants"])
+        {
+          <li>@restaurant.GetName() : @restaurant.GetLocation()</li>
+        }
+      </ol>
+    }
+    <p><a href="/restaurants/new">Add a new restaurant</a></p>
+    <p><a href="/">Return to Main Page</a></p>
+  </body>
+</html>

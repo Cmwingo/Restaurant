@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Restaurants</title>
+  </head>
+  <body>
+    <h1>Add a new restaurant</h1>
+    <form action="/restaurants/new" method="post">
+      <label for="restaurant-name">Restaurant name:</label>
+      <input type="text" name="restaurant-name" id="restaurant-name">
+      <label for="restaurant-location">Restaurant location:</label>
+      <input type="text" name="restaurant-location" id="restaurant-location">
+      <label for="restaurant-description">Restaurant description:</label>
+      <input type="text" name="restaurant-description" id="restaurant-description">
+      <label for="avg-cost">Avg Cost($, $$, $$$, or $$$$):</label>
+      <input type="text" name="avg-cost" id="avg-cost">
+      <label for="delivery">Does this restaurant deliver?</label>
+      <input type="radio" name="delivery" value=false checked> No
+      <input type="radio" name="delivery" value=true> Yes
+      <select class="" name="cuisine-id">
+        @foreach(var cuisine in Model)
+        {
+          <option value="@cuisine.GetId()">@cuisine.GetName()</option>
+        }
+      </select>
+      <button type="submit">Add new restaurant</button>
+    </form>
+    <p><a href="/">Back home</a></p>
+    <p><a href="/restaurants">View all restaurants</a></p>
+  </body>
+</html>
